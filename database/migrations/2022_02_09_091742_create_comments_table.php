@@ -3,11 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Eloquent\SoftDeletes;
-class CreatePostsTable extends Migration
+
+class CreateCommentsTable extends Migration
 {
-    use SoftDeletes;
-     
     /**
      * Run the migrations.
      *
@@ -15,15 +13,19 @@ class CreatePostsTable extends Migration
      */
     public function up()
     {
-        Schema::create('posts', function (Blueprint $table) {
+        Schema::create('comments', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->string('content', 100);
-            $table->integer('progress');
             $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('post_id');
             $table->timestamps();
             
-             $table->foreign('user_id')
+            $table->foreign('user_id')
                    ->references('id')->on('users')
+                   ->onDelete('cascade');
+                   
+            $table->foreign('post_id')
+                   ->references('id')->on('posts')
                    ->onDelete('cascade');
         });
     }
@@ -35,6 +37,6 @@ class CreatePostsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts');
+        Schema::dropIfExists('comments');
     }
 }

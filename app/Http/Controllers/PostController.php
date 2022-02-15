@@ -12,9 +12,9 @@ class PostController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Post $post)
     {
-        //
+         return view('posts/index')->with(['posts' => $post->getByLimit()]);  
     }
 
     /**
@@ -24,7 +24,7 @@ class PostController extends Controller
      */
     public function create()
     {
-        //
+        return view('posts/create');
     }
 
     /**
@@ -33,9 +33,12 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, Post $post)
     {
-        //
+        $input = $request['post'];
+        $input += ['user_id' => $request->user()->id];
+        $post->fill($input)->save();
+        return redirect('/posts/' . $post->id);
     }
 
     /**
@@ -46,7 +49,7 @@ class PostController extends Controller
      */
     public function show(Post $post)
     {
-        //
+        return view('posts/show')->with(['post' => $post]);
     }
 
     /**
@@ -57,7 +60,7 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
-        //
+        return view('posts/edit')->with(['post' => $post]);
     }
 
     /**
@@ -69,7 +72,12 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $input_post = $request['post'];
+        $input_post += ['user_id' => $request->user()->id];
+    
+        $post->fill($input_post)->save();
+
+        return redirect('/posts/' . $post->id);
     }
 
     /**
@@ -78,8 +86,9 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Post $post)
+    public function delete(Post $post)
     {
-        //
+        $post->delete();
+        return redirect('/');
     }
 }
